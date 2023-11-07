@@ -7,16 +7,21 @@ class WordLadderViewModel : ViewModel() {
 
     val target: String = "test"
 
-    val wordStack: Stack<String>
-    var currentWord: String = ""
+    val historyList: List<String>
+        get() = wordStack.toList()
 
-    init {
-        wordStack = Stack<String>()
-        // init currentWord
+    private val wordStack: Stack<String> = loadHistoryStack()
+    private var currentWord: String = if (!wordStack.isEmpty()) wordStack.peek() else ""
+        get() = currentWord
+
+
+    private fun loadHistoryStack(): Stack<String> {
+        // this will retrieve stored data from user prefs
+        return Stack<String>()
     }
 
     fun getPreviousWord(): String? {
-        return if (wordStack.size > 0) {
+        return if (!wordStack.isEmpty()) {
             currentWord = wordStack.pop()
             currentWord
         } else null
@@ -28,12 +33,17 @@ class WordLadderViewModel : ViewModel() {
         return checkWord(currentWord)
     }
 
-    fun pushWord(word: String) {
+    private fun pushWord(word: String) {
         wordStack.push(word)
     }
 
-    fun checkWord(word: String): Boolean {
-        return word.equals(target)
+    private fun checkWord(word: String): Boolean {
+        return word == target
+    }
+
+    private fun updateRecycler() {
+        // this should pass the new stack data to the recycler
+        // and call updateUI on fragment
     }
 
 }
