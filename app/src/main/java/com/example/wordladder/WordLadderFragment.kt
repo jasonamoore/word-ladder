@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wordladder.databinding.FragmentWordLadderBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class WordLadderFragment : Fragment() {
 
@@ -33,18 +36,32 @@ class WordLadderFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentWordLadderBinding.inflate(inflater, container, false)
 
         // setting the recycler view stuff
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        updateRecycler(viewModel.historyList)
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // get challenge (should add try-catch here)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.challengeFlow.collect { challenge ->
+                    challenge?.let {
+                        viewModel.updateChallenge(it)
+                        updateRecycler(viewModel.historyList)
+                        // "turn on" the game (enable buttons)
+                        enableUI()
+                    }
+                }
+            }
+        }
+
         setupUI()
     }
 
@@ -86,13 +103,15 @@ class WordLadderFragment : Fragment() {
             }
             // get previous word from view model
             prevWord.setOnClickListener {
-                val prev = viewModel.getPreviousWord()
-                prev?.let {
-                    editText.setText(it, TextView.BufferType.EDITABLE)
-                    updateRecycler(viewModel.historyList)
-                }
+                viewModel.getPreviousWord()
+                updateRecycler(viewModel.historyList)
             }
         }
+    }
+
+    private fun enableUI() {
+        binding.submitWord.isEnabled = true
+        binding.prevWord.isEnabled = true
     }
 
     override fun onDestroy() {
