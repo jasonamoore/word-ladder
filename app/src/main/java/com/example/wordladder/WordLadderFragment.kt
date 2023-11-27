@@ -85,7 +85,7 @@ class WordLadderFragment : Fragment() {
                 val inputText = editText.text.toString().uppercase()
                 if (!viewModel.validLadderWord(inputText)) {
                     Snackbar.make(
-                        root, "Bad input!",
+                        root, "Invalid step.",
                         Snackbar.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
@@ -93,7 +93,7 @@ class WordLadderFragment : Fragment() {
                 val result = viewModel.wordSubmitted(inputText)
                 if (result) {
                     Snackbar.make(
-                        root, R.string.success,
+                        root, "Nice job!",
                         Snackbar.LENGTH_SHORT
                     ).show()
                 } else {
@@ -103,15 +103,29 @@ class WordLadderFragment : Fragment() {
             }
             // get previous word from view model
             prevWord.setOnClickListener {
-                viewModel.getPreviousWord()
+                val prev = viewModel.getPreviousWord()
+                if (prev == viewModel.currentChallenge?.startWord) {
+                    Snackbar.make(
+                        root, "Already at the first word!",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                }
                 updateRecycler(viewModel.historyList)
+            }
+            // clear the word
+            clearWord.setOnClickListener {
+                editText.setText("") // clear
             }
         }
     }
 
     private fun enableUI() {
-        binding.submitWord.isEnabled = true
-        binding.prevWord.isEnabled = true
+        binding.apply {
+            binding.submitWord.isEnabled = true
+            binding.prevWord.isEnabled = true
+            // display target word
+            targetWord.setText(viewModel.currentChallenge?.endWord)
+        }
     }
 
     override fun onDestroy() {
