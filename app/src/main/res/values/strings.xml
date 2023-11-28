@@ -1,10 +1,22 @@
 <resources>
     <string name="app_name">Word Ladder</string>
     <string name="settings">settings</string>
-    <string name="success">you did it!</string>
     <string name="previous">previous</string>
     <string name="clear">clear</string>
     <string name="submit">submit</string>
-    <string name="underscores">____</string>
+    <string name="underscores">----</string>
     <string name="target">"target: "</string>
+    <string name="help">help</string>
+    <string name="share">share</string>
+    <string name="name_header">name</string>
+    <string name="score_header">score</string>
+    <string name="submit_score">submit score!</string>
+    <string name="scoreboard">scoreboard</string>
+    <string name="no_previous">already at first word!</string>
+    <string name="finished">you did it!</string>
+    <string name="invalid">invalid step!</string>
+    <string name="share_subject">Today\'s Word Ladder challenge</string>
+    <string name="share_message">I beat today\'s Word Ladder, from %s to %s in %d steps!</string>
+    <string name="help_ok">OK</string>
+    <string name="help_message">Word Ladder is a game of stepping from one word to another.\nTo complete the daily challenge, you need to make it from the start word to the target word.\nTo step to a new a word, you can either:\n1) Enter a word that is different by exactly one letter\n2) Enter a word that consists of the same letters in a different order\nTry to complete the challenge in as few steps as possible! Good luck!</string>
 </resources>

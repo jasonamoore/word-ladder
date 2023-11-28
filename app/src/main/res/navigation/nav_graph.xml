@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/wordLadderFragment">
+    <fragment
+        android:id="@+id/wordLadderFragment"
+        android:name="com.example.wordladder.WordLadderFragment"
+        android:label="WordLadderFragment" >
+        <action
+            android:id="@+id/to_scoreboard"
+            app:destination="@id/scoreboardFragment" />
+        <action
+            android:id="@+id/showHelp"
+            app:destination="@id/helpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scoreboardFragment"
+        android:name="com.example.wordladder.ScoreboardFragment"
+        android:label="ScoreboardFragment" >
+        <argument
+            android:name="score"
+            app:argType="integer" />
+        <argument
+            android:name="startWord"
+            app:argType="string" />
+        <argument
+            android:name="endWord"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/helpFragment"
+        android:name="com.example.wordladder.HelpFragment"
+        android:label="HelpFragment" />
+</navigation>

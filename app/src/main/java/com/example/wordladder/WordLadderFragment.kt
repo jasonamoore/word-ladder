@@ -2,6 +2,9 @@ package com.example.wordladder
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
@@ -10,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wordladder.databinding.FragmentWordLadderBinding
 import com.google.android.material.snackbar.Snackbar
@@ -27,11 +31,11 @@ class WordLadderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         // load up stuff
         viewModel.loadWordTable(
             resources.openRawResource(R.raw.dictionary))
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,6 +69,20 @@ class WordLadderFragment : Fragment() {
         setupUI()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_wordladder, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.help -> {
+                findNavController().navigate(WordLadderFragmentDirections.showHelp())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
     private fun setupUI() {
         binding.apply {
             // on text change we should force uppercase
@@ -85,7 +103,7 @@ class WordLadderFragment : Fragment() {
                 val inputText = editText.text.toString().uppercase()
                 if (!viewModel.validLadderWord(inputText)) {
                     Snackbar.make(
-                        root, "Invalid step.",
+                        root, R.string.invalid,
                         Snackbar.LENGTH_SHORT
                     ).show()
                     return@setOnClickListener
@@ -93,9 +111,11 @@ class WordLadderFragment : Fragment() {
                 val result = viewModel.wordSubmitted(inputText)
                 if (result) {
                     Snackbar.make(
-                        root, "Nice job!",
+                        root, R.string.finished,
                         Snackbar.LENGTH_SHORT
                     ).show()
+                    viewModel.won = true
+                    enableScoreboard()
                 } else {
                     updateRecycler(viewModel.historyList)
                     editText.setText("") // clear input
@@ -103,10 +123,11 @@ class WordLadderFragment : Fragment() {
             }
             // get previous word from view model
             prevWord.setOnClickListener {
+                val prescore = viewModel.score
                 val prev = viewModel.getPreviousWord()
-                if (prev == viewModel.currentChallenge?.startWord) {
+                if (prescore == 1) {
                     Snackbar.make(
-                        root, "Already at the first word!",
+                        root, R.string.no_previous,
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
@@ -116,6 +137,27 @@ class WordLadderFragment : Fragment() {
             clearWord.setOnClickListener {
                 editText.setText("") // clear
             }
+            showScores.setOnClickListener {
+                val cur = viewModel.currentChallenge
+                cur?.let {
+                    findNavController().navigate(
+                        WordLadderFragmentDirections.toScoreboard(
+                            viewModel.score,
+                            it.startWord,
+                            it.endWord
+                        )
+                    )
+                }
+            }
+        }
+        if (viewModel.won)
+            enableScoreboard()
+    }
+    private fun enableScoreboard() {
+        binding.apply {
+            submitWord.isEnabled = false
+            showScores.visibility = View.VISIBLE
+            editText.isEnabled = false
         }
     }
 
@@ -128,8 +170,8 @@ class WordLadderFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 

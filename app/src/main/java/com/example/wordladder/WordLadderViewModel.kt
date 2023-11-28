@@ -19,13 +19,17 @@ class WordLadderViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val response = ChallengeRepository().getDailyChallenge()
+                val response = ChallengeRepository.get().getDailyChallenge()
                 _challengeFlow.value = response
             } catch (ex : Exception) {
                 Log.e("WordLadder", "Failed to load daily challenge.")
             }
         }
     }
+
+    var won: Boolean = false
+    val score: Int
+        get() = historyList.size
 
     // flows that are updated when challenge is obtained from network request
     private val _challengeFlow: MutableStateFlow<Challenge?> = MutableStateFlow(null)
@@ -82,11 +86,6 @@ class WordLadderViewModel : ViewModel() {
         return false
     }
 
-    fun loadHistoryStack(): Stack<String> {
-        // TODO this will retrieve stored data from user prefs
-        return Stack<String>()
-    }
-
     fun loadWordTable(dictStream: InputStream) {
         wordTable = HashSet()
         dictStream.bufferedReader().forEachLine { wordTable.add(it.uppercase()) }
@@ -101,6 +100,7 @@ class WordLadderViewModel : ViewModel() {
     }
 
     private fun initGameData() {
+        won = false
         wordStack = Stack()
         wordStack.push(currentChallenge?.startWord)
     }

@@ -21,10 +21,10 @@
         android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.34" />
+        app:layout_constraintVertical_bias="0.356" />
 
     <Button
         android:id="@+id/prev_word"
@@ -87,6 +87,22 @@
         android:text="@string/submit"
         android:textSize="24sp"
         app:icon="@drawable/ic_go_check"
+        app:iconGravity="start"
+        app:iconPadding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    <Button
+        android:id="@+id/show_scores"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:text="@string/scoreboard"
+        android:textSize="24sp"
+        app:icon="@drawable/ic_scoreboard"
         app:iconGravity="start"
         app:iconPadding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
