@@ -19,4 +19,5 @@
     <string name="share_message">I beat today\'s Word Ladder, from %s to %s in %d steps!</string>
     <string name="help_ok">OK</string>
     <string name="help_message">Word Ladder is a game of stepping from one word to another.\nTo complete the daily challenge, you need to make it from the start word to the target word.\nTo step to a new a word, you can either:\n1) Enter a word that is different by exactly one letter\n2) Enter a word that consists of the same letters in a different order\nTry to complete the challenge in as few steps as possible! Good luck!</string>
+    <string name="cha_header">%s to %s</string>
 </resources>
