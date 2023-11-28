@@ -8,7 +8,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +19,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wordladder.databinding.FragmentScoreboardBinding
 import kotlinx.coroutines.launch
+
+const val REQ_KEY = "SCOREBOARD_REQUEST_KEY"
+const val SUB_KEY = "SUBMITTED"
 
 class ScoreboardFragment : Fragment() {
 
@@ -94,10 +99,16 @@ class ScoreboardFragment : Fragment() {
 
     private fun setupUI() {
         binding.apply {
-            challengeHeader.text = fragArgs.startWord + " to " + fragArgs.endWord
+            challengeHeader.text = String.format(resources.getString(R.string.cha_header), fragArgs.startWord, fragArgs.endWord)
             submitButton.setOnClickListener {
                 // share score
                 shareScore(fragArgs.score)
+            }
+            // check if can submit
+            if (!fragArgs.canSubmit) {
+                binding.submitButton.isEnabled = false
+                binding.submitBox.visibility = View.GONE
+                setFragmentResult(REQ_KEY, bundleOf(SUB_KEY to true))
             }
         }
     }
@@ -115,7 +126,7 @@ class ScoreboardFragment : Fragment() {
         val name = binding.submitBox.text.toString()
         binding.submitButton.isEnabled = false
         binding.submitBox.visibility = View.GONE
-        val currScoreboard = viewModel.scoreboardFlow.value;
+        val currScoreboard = viewModel.scoreboardFlow.value
         currScoreboard?.let {
             updateRecycler(listOf(name) + it.nameList,
                 listOf(score) + it.scoreList)
@@ -123,6 +134,7 @@ class ScoreboardFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             ChallengeRepository.get().postScore(name, score)
         }
+        setFragmentResult(REQ_KEY, bundleOf(SUB_KEY to true))
     }
 
 }

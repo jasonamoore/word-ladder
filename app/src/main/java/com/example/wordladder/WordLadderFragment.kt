@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +33,11 @@ class WordLadderFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        // set listener for scoreboard
+        setFragmentResultListener(REQ_KEY) { key, bundle ->
+            val submitted = bundle.getBoolean(SUB_KEY)
+            viewModel.submitted = submitted
+        }
         // load up stuff
         viewModel.loadWordTable(
             resources.openRawResource(R.raw.dictionary))
@@ -60,12 +66,12 @@ class WordLadderFragment : Fragment() {
                         viewModel.updateChallenge(it)
                         updateRecycler(viewModel.historyList)
                         // "turn on" the game (enable buttons)
-                        enableUI()
+                        if (!viewModel.won)
+                            enableUI()
                     }
                 }
             }
         }
-
         setupUI()
     }
 
@@ -124,7 +130,7 @@ class WordLadderFragment : Fragment() {
             // get previous word from view model
             prevWord.setOnClickListener {
                 val prescore = viewModel.score
-                val prev = viewModel.getPreviousWord()
+                viewModel.getPreviousWord()
                 if (prescore == 1) {
                     Snackbar.make(
                         root, R.string.no_previous,
@@ -144,7 +150,8 @@ class WordLadderFragment : Fragment() {
                         WordLadderFragmentDirections.toScoreboard(
                             viewModel.score,
                             it.startWord,
-                            it.endWord
+                            it.endWord,
+                            !viewModel.submitted
                         )
                     )
                 }
@@ -155,6 +162,8 @@ class WordLadderFragment : Fragment() {
     }
     private fun enableScoreboard() {
         binding.apply {
+            prevWord.isEnabled = false
+            clearWord.isEnabled = false
             submitWord.isEnabled = false
             showScores.visibility = View.VISIBLE
             editText.isEnabled = false

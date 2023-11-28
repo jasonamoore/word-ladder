@@ -28,6 +28,7 @@ class WordLadderViewModel : ViewModel() {
     }
 
     var won: Boolean = false
+    var submitted: Boolean = false
     val score: Int
         get() = historyList.size
 
