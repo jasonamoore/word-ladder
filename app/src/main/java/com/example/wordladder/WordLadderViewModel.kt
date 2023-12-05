@@ -100,8 +100,9 @@ class WordLadderViewModel : ViewModel() {
             initGameData()
     }
 
-    private fun initGameData() {
+    fun initGameData() {
         won = false
+        submitted = false
         wordStack = Stack()
         wordStack.push(currentChallenge?.startWord)
     }

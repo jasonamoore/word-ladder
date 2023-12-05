@@ -143,6 +143,11 @@ class WordLadderFragment : Fragment() {
             clearWord.setOnClickListener {
                 editText.setText("") // clear
             }
+            playAgain.setOnClickListener {
+                viewModel.initGameData()
+                enableUI()
+                updateRecycler(viewModel.historyList)
+            }
             showScores.setOnClickListener {
                 val cur = viewModel.currentChallenge
                 cur?.let {
@@ -162,18 +167,26 @@ class WordLadderFragment : Fragment() {
     }
     private fun enableScoreboard() {
         binding.apply {
-            prevWord.isEnabled = false
-            clearWord.isEnabled = false
-            submitWord.isEnabled = false
+            prevWord.visibility = View.GONE
+            clearWord.visibility = View.GONE
             showScores.visibility = View.VISIBLE
+            playAgain.visibility = View.VISIBLE
             editText.isEnabled = false
         }
     }
 
     private fun enableUI() {
         binding.apply {
-            binding.submitWord.isEnabled = true
-            binding.prevWord.isEnabled = true
+            prevWord.isEnabled = true
+            submitWord.isEnabled = true
+            clearWord.visibility = View.VISIBLE
+            prevWord.visibility = View.VISIBLE
+            showScores.visibility = View.GONE
+            playAgain.visibility = View.GONE
+
+            editText.setText("")
+            editText.isEnabled = true
+
             // display target word
             targetWord.setText(viewModel.currentChallenge?.endWord)
         }
