@@ -121,6 +121,7 @@ class WordLadderFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                     viewModel.won = true
+                    binding.scoreCount.text = String.format(getString(R.string.score_count), viewModel.score)
                     enableScoreboard()
                 } else {
                     updateRecycler(viewModel.historyList)
@@ -188,7 +189,7 @@ class WordLadderFragment : Fragment() {
             editText.isEnabled = true
 
             // display target word
-            targetWord.setText(viewModel.currentChallenge?.endWord)
+            targetWord.text = viewModel.currentChallenge?.endWord
         }
     }
 
@@ -198,6 +199,7 @@ class WordLadderFragment : Fragment() {
     }
 
     private fun updateRecycler(list: List<String>) {
+        binding.scoreCount.text = String.format(getString(R.string.score_count), viewModel.score)
         binding.recyclerView.adapter = LadderAdapter(list)
     }
 

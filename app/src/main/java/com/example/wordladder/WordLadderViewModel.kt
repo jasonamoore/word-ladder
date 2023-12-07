@@ -30,7 +30,7 @@ class WordLadderViewModel : ViewModel() {
     var won: Boolean = false
     var submitted: Boolean = false
     val score: Int
-        get() = historyList.size
+        get() = historyList.size - 1
 
     // flows that are updated when challenge is obtained from network request
     private val _challengeFlow: MutableStateFlow<Challenge?> = MutableStateFlow(null)
